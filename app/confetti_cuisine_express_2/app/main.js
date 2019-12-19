@@ -25,14 +25,10 @@ app.get("/", (req, res) => {
 	res.send("Welcome to Confetti Cuisine!");
 });
 
-// app.get("/subscribers", subscribersController.getAllSubscribers, (req, res, next) => {
-// 	console.log(req.data);
-// 	// res.send(req.data);
-// 	// res.render("subscribers", {subscribers: req.data});
-// });
-
 app.get("/subscribers", subscribersController.getAllSubscribers);
 
+const usersController = require("./controllers/usersController");
+app.get("/users", usersController.index, usersController.indexView);
 
 app.use(
 	express.urlencoded({
