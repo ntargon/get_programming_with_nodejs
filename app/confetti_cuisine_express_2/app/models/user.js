@@ -1,6 +1,5 @@
 "use strict";
 const Subscriber = require("./subscriber");
-
 const mongoose = require("mongoose"),
 	{Schema} = mongoose,
 

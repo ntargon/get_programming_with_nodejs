@@ -1,7 +1,8 @@
 "use strict";
 
-const mongoose = require("mongoose");
-const subscriberSchema = mongoose.Schema({
+const mongoose = require("mongoose"),
+	{Schema} = mongoose,
+	subscriberSchema = new Schema({
 	name: {
 		type: String,
 		required: true
@@ -17,7 +18,7 @@ const subscriberSchema = mongoose.Schema({
 		min: [10000, "Zip code too short"],
 		max: 99999
 	},
-	courses: [{type: mongoose.Schema.Types.ObjectId, ref: "Course"}]
+	courses: [{type: Schema.Types.ObjectId, ref: "Course"}]
 });
 
 subscriberSchema.methods.getInfo = function() {
