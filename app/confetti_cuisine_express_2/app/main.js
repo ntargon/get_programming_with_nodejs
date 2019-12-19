@@ -5,6 +5,7 @@ mongoose.connect(
 	"mongodb://db:27017/recipe_db",
 	{useNewUrlParse: true}
 );
+mongoose.Promise = global.Promise;
 
 const subscribersController = require("./controllers/subscribersController");
 
