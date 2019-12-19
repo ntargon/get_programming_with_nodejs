@@ -16,6 +16,14 @@
 					</a>
 				<td><%= user.email %></td>
 				<td><%= user.zipCode %></td>
+				<td>
+					<a href="<%= `/users/${user._id}/edit` %>">
+						Edit
+					</a>
+				</td>
+				<td>
+					<a href="<%= `users/${user._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this recorde?')">Delete</a>
+				</td>
 			</tr>
 		<% }); %>
 		</tbody>
