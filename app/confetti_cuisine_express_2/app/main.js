@@ -1,14 +1,10 @@
 "use strict";
+
 const mongoose = require("mongoose");
 mongoose.connect(
 	"mongodb://db:27017/recipe_db",
 	{useNewUrlParse: true}
 );
-const db = mongoose.connection;
-
-db.once("open", () => {
-	console.log("Successfully connected to MongoDB using Mongoose!");
-});
 
 const subscribersController = require("./controllers/subscribersController");
 
