@@ -36,5 +36,34 @@ module.exports = {
 			.catch(error => {
 				res.send(error);
 			});
+	},
+	index: (req, res, next) => {
+		Subscriber.find()
+			.then(subscribers => {
+				res.locals.subscribers = subscribers;
+				next();
+			})
+			.catch(error => {
+				console.log(`Error fetching subscribers: ${error.message}`);
+				next(error);
+			});
+		},
+	indexView: (req, res) => {
+		res.render("subscribers/index");
+	},
+	show: (req, res, next) => {
+		let subscriberId = req.params.id;
+		Subscriber.findById(subscriberId)
+			.then(subscriber => {
+				res.locals.subscriber = subscriber;
+				next();
+			})
+			.catch(error => {
+				console.log(`Error fetching subscriber by ID: ${error.message}`);
+				next(error);
+			});
+	},
+	showView: (req, res) => {
+		res.render("subscribers/show");
 	}
 }

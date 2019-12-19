@@ -11,37 +11,45 @@ const subscribersController = require("./controllers/subscribersController");
 
 
 const express = require("express"),
-	app = express();
+	app = express(),
+	router = express.Router();
 const homeController = require("./controllers/homeController");
 const errorController =require("./controllers/errorController");
 const layouts = require("express-ejs-layouts");
 
+app.use("/", router);
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "ejs");
-app.use(layouts);
-app.use(express.static("public"))
+router.use(layouts);
+router.use(express.static("public"))
 
-app.get("/", (req, res) => {
+router.get("/", (req, res) => {
 	res.send("Welcome to Confetti Cuisine!");
-});
+}); 
 
-app.get("/subscribers", subscribersController.getAllSubscribers);
+router.get("/subscribers", subscribersController.index, subscribersController.indexView);
+router.get("/subscribers/:id", subscribersController.show, subscribersController.showView);
 
-const usersController = require("./controllers/usersController");
-app.get("/users", usersController.index, usersController.indexView);
 
-app.use(
+router.use(
 	express.urlencoded({
 		extended: false
 	})
 );
-app.use(express.json());
+router.use(express.json());
 
-app.get("/contact", subscribersController.getSubscriptionPage);
-app.post("/subscribe", subscribersController.saveSubscriber);
 
-app.use(errorController.pageNotFoundError);
-app.use(errorController.internalServerError);
+const usersController = require("./controllers/usersController");
+router.get("/users", usersController.index, usersController.indexView);
+router.get("/users/new", usersController.new);
+router.post("/users/create", usersController.create, usersController.redirectView);
+
+router.get("/contact", subscribersController.getSubscriptionPage);
+router.post("/subscribe", subscribersController.saveSubscriber);
+router.get("/users/:id", usersController.show, usersController.showView);
+
+router.use(errorController.pageNotFoundError);
+router.use(errorController.internalServerError);
 
 app.listen(app.get("port"), () => {
 	console.log(
