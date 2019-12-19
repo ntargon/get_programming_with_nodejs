@@ -8,18 +8,9 @@ const db = mongoose.connection;
 
 db.once("open", () => {
 	console.log("Successfully connected to MongoDB using Mongoose!");
-})
-
-const Subscriber = require("./models/subscriber");
-
-
-var myQuery = Subscriber.findOne({
-	name: "Jon Wexler"
-})
-.where("email", /wexler/);
-myQuery.exec((error, data) => {
-	if(data) console.log(data.name);
 });
+
+const subscribersController = require("./controllers/subscribersController");
 
 
 const express = require("express"),
@@ -37,6 +28,15 @@ app.get("/", (req, res) => {
 	res.send("Welcome to Confetti Cuisine!");
 });
 
+// app.get("/subscribers", subscribersController.getAllSubscribers, (req, res, next) => {
+// 	console.log(req.data);
+// 	// res.send(req.data);
+// 	// res.render("subscribers", {subscribers: req.data});
+// });
+
+app.get("/subscribers", subscribersController.getAllSubscribers);
+
+
 app.use(
 	express.urlencoded({
 		extended: false
@@ -44,9 +44,8 @@ app.use(
 );
 app.use(express.json());
 
-app.get("/courses", homeController.showCourses);
-app.get("/contact", homeController.showSignUp);
-app.post("/contact", homeController.postedSignUpForm);
+app.get("/contact", subscribersController.getSubscriptionPage);
+app.post("/subscribe", subscribersController.saveSubscriber);
 
 app.use(errorController.pageNotFoundError);
 app.use(errorController.internalServerError);
