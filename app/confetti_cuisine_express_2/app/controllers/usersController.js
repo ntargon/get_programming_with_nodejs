@@ -1,6 +1,18 @@
 "use strict";
 const User = require("../models/user");
 
+let getUserParams = (body) => {
+	return {
+		name: {
+			first: body.first,
+			last: body.last
+		},
+		email: body.email,
+		password: body.password,
+		zipCode: body.zipCode
+	};
+};
+
 module.exports = {
 	index: (req, res, next) => {
 		User.find()
@@ -20,26 +32,37 @@ module.exports = {
 		res.render("users/new");
 	},
 	create: (req, res, next) => {
-		console.log(req);
-		let userParams = {
-			name: {
-				first: req.body.first,
-				last: req.body.last
-			},
-			email: req.body.email,
-			password: req.body.password,
-			zipCode: req.body.zipCode
-		};
+		let userParams = getUserParams(req.body);
 		User.create(userParams)
 			.then(user => {
-				res.locals.redirect = "/users";
+				req.flash("success", `${user.fullName}'s account created successfully!`);
+				res.locals.redirect ="/users";
 				res.locals.user = user;
 				next();
 			})
 			.catch(error => {
 				console.log(`Error saving user: ${error.message}`);
-				next(error);
+				res.locals.redirect = "/users/new";
+				req.flash(
+					"error",
+					`Failed to create user account because: ${error.message}`
+					);
+				next();
 			});
+		// if(req.skip) next();
+
+		// let newUser = new User( getUserParams(req.body) );
+		// User.register(newUser, req.body.password, (error, user) => {
+		// 	if(user) {
+		// 		req.flash("success", `${user.fullName}'s account created successfully!`);
+		// 		res.locals.redirect = "/users";
+		// 		next();
+		// 	}else{
+		// 		req.flash("error", `Failed to create user account because: ${error.message}.`);
+		// 		res.locals.redirect = "/users/new";
+		// 		next();
+		// 	}
+		// });
 	},
 	redirectView: (req, res, next) => {
 		let redirectPath = res.locals.redirect;

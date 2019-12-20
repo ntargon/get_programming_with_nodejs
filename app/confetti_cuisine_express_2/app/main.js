@@ -22,12 +22,29 @@ router.use(methodOverride("_method", {
 	methods: ["POST", "GET"]
 }));
 
+const expressSession = require("express-session"),
+	cookieParser = require("cookie-parser"),
+	connectFlash = require("connect-flash");
+
 app.use("/", router);
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "ejs");
 router.use(layouts);
 router.use(express.static("public"))
-
+router.use(cookieParser("secret_passcode"));
+router.use(expressSession({
+	secret: "secret_passcode",
+	cookie: {
+		maxAge: 4000000
+	},
+	resave: false,
+	saveUninitialized: false
+}));
+router.use(connectFlash());
+router.use((req, res, next) => {
+	res.locals.flashMessages = req.flash();
+	next();
+});
 
 router.use(
 	express.urlencoded({
