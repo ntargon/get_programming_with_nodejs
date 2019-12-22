@@ -3,7 +3,7 @@
 const mongoose = require("mongoose");
 mongoose.connect(
 	"mongodb://db:27017/recipe_db",
-	{useNewUrlParse: true}
+	{useNewUrlParser: true}
 );
 mongoose.Promise = global.Promise;
 
@@ -25,6 +25,8 @@ router.use(methodOverride("_method", {
 const expressSession = require("express-session"),
 	cookieParser = require("cookie-parser"),
 	connectFlash = require("connect-flash");
+
+const expressValidator = require("express-validator");
 
 app.use("/", router);
 app.set("port", process.env.PORT || 3000);
@@ -52,10 +54,15 @@ router.use(
 	})
 );
 router.use(express.json());
+router.use(expressValidator());
+
 
 router.get("/", (req, res) => {
 	res.send("Welcome to Confetti Cuisine!");
 }); 
+
+router.use(errorController.internalServerError);
+
 
 router.get("/subscribers", subscribersController.index, subscribersController.indexView);
 router.get("/subscribers/new", subscribersController.new);
@@ -67,7 +74,9 @@ router.delete("/subscribers/:id/delete", subscribersController.delete, subscribe
 
 router.get("/users", usersController.index, usersController.indexView);
 router.get("/users/new", usersController.new);
-router.post("/users/create", usersController.create, usersController.redirectView);
+router.post("/users/create", usersController.validate, usersController.create, usersController.redirectView);
+router.get("/users/login", usersController.login);
+router.post("/users/login", usersController.authenticate, usersController.redirectView);
 router.get("/users/:id", usersController.show, usersController.showView);
 router.get("/users/:id/edit", usersController.edit);
 router.put("/users/:id/update", usersController.update, usersController.redirectView);
@@ -81,14 +90,13 @@ router.get("/courses/:id/edit", coursesController.edit);
 router.put("/courses/:id/update", coursesController.update, coursesController.redirectView);
 router.delete("/courses/:id/delete", coursesController.delete, coursesController.redirectView);
 
+router.use(errorController.pageNotFoundError);
 
 
 
 router.get("/contact", subscribersController.getSubscriptionPage);
 router.post("/subscribe", subscribersController.saveSubscriber);
 
-router.use(errorController.pageNotFoundError);
-router.use(errorController.internalServerError);
 
 app.listen(app.get("port"), () => {
 	console.log(
