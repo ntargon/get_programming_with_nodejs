@@ -28,6 +28,8 @@ const expressSession = require("express-session"),
 
 const expressValidator = require("express-validator");
 
+
+
 app.use("/", router);
 app.set("port", process.env.PORT || 3000);
 app.set("view engine", "ejs");
@@ -43,10 +45,7 @@ router.use(expressSession({
 	saveUninitialized: false
 }));
 router.use(connectFlash());
-router.use((req, res, next) => {
-	res.locals.flashMessages = req.flash();
-	next();
-});
+
 
 router.use(
 	express.urlencoded({
@@ -56,9 +55,27 @@ router.use(
 router.use(express.json());
 router.use(expressValidator());
 
+const passport = require("passport");
+router.use(passport.initialize());
+router.use(passport.session());
+
+const User = require("./models/user");
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+router.use((req, res, next) => {
+	res.locals.flashMessages = req.flash();
+	res.locals.loggedIn = req.isAuthenticated();
+	console.log(res.locals.loggedIn);
+	res.locals.currentUser = req.user;
+	next();
+});
 
 router.get("/", (req, res) => {
-	res.send("Welcome to Confetti Cuisine!");
+	// res.send("Welcome to Confetti Cuisine!");
+	res.render("index");
 }); 
 
 router.use(errorController.internalServerError);
@@ -76,7 +93,9 @@ router.get("/users", usersController.index, usersController.indexView);
 router.get("/users/new", usersController.new);
 router.post("/users/create", usersController.validate, usersController.create, usersController.redirectView);
 router.get("/users/login", usersController.login);
-router.post("/users/login", usersController.authenticate, usersController.redirectView);
+router.get("/users/logout", usersController.logout, usersController.redirectView);
+// router.post("/users/login", usersController.authenticate, usersController.redirectView);
+router.post("/users/login", usersController.authenticate);
 router.get("/users/:id", usersController.show, usersController.showView);
 router.get("/users/:id/edit", usersController.edit);
 router.put("/users/:id/update", usersController.update, usersController.redirectView);

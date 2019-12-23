@@ -5,6 +5,16 @@
 	<title></title>
 </head>
 <body>
+	<nav>
+		<% if (loggedIn) { %>
+			<p>
+				Logged in as <a href="<%= `/users/${currentUser._id}`%>"><%= currentUser.fullName%></a>
+				<a href="/users/logout">Log out</a>
+			</p>
+		<% } else { -%>
+			<a href="/users/login">Log In</a>
+		<% } -%>
+	</nav>
 	<div class="flashes">
 		<% if (flashMessages){ %>
 			<% if (flashMessages.success) { %>

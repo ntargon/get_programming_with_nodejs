@@ -1,7 +1,9 @@
 "use strict";
 
 const mongoose =require("mongoose"),
-	Subscriber = require("./models/subscriber");
+	Subscriber = require("./models/subscriber"),
+	Course = require("./models/course"),
+	User = require("./models/user");
 
 mongoose.connect(
 	"mongodb://db:27017/recipe_db",
@@ -12,19 +14,31 @@ mongoose.connection;
 
 var contacts = [
 	{	
-		name: "jon Wexler",
+		name: {
+			first: "jon",
+			last: "Wexler"
+		},
 		email: "jon@jonwexler.com",
-		zipCode: 10016
+		zipCode: 10016,
+		password: "jon"
 	},
 	{
-		name: "Chef Eggplang",
+		name: {
+			first: "Chef",
+			last: "Eggplang"
+		},
 		email: "eggplang@resipeapp.com",
-		zipCode: 20331
+		zipCode: 20331,
+		password: "Chef"
 	},
 	{
-		name: "Professor Souffle",
+		name: {
+			first: "Professor",
+			last: "Souffle"
+		},
 		email: "souffle@recipeapp.com",
-		zipCode: 19103
+		zipCode: 19103,
+		password: "Professor"
 	}
 ];
 
@@ -34,13 +48,29 @@ Subscriber.deleteMany()
 		console.log("Subscriber data is empty!");
 	});
 
+
+Course.deleteMany()
+	.exec()
+	.then(() => {
+		console.log("Course data is empty!");
+	});
+
+
+User.deleteMany()
+	.exec()
+	.then(() => {
+		console.log("User data is empty!");
+	});
+
 var commands = [];
 
 contacts.forEach((c) => {
-	commands.push(Subscriber.create({
+	let newUser = new User({
 		name: c.name,
-		email: c.email
-	}));
+		email: c.email,
+		zipCode: c.zipCode
+	})
+	commands.push( User.register(newUser, c.password) );
 });
 
 Promise.all(commands)
