@@ -46,7 +46,7 @@ a {
   padding: 0% 10%;
 }
 
-.button {
+.button, .join-button {
   background-color: #3d41b4;
   padding: 0.3vw 3vw;
   border-radius: 2px;
@@ -56,7 +56,7 @@ a {
   margin-bottom: 2px;
 }
 
-.button:hover {
+.button:hover, .join-button:hover {
   background-color: #697acb;
 }
 
