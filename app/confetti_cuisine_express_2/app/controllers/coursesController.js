@@ -14,18 +14,21 @@ module.exports = {
 			});
 		},
 	indexView: (req, res) => {
-		res.render("courses/index");
+		if(req.query.format === 'json'){
+			res.json(res.locals.courses);
+		}else{
+			res.render("courses/index");
+		}
 	},
 	new: (req, res) => {
 		res.render("courses/new");
 	},
 	create: (req, res, next) => {
-		console.log(req);
 		let courseParams = {
 			title: req.body.title,
 			description: req.body.description,
-			maxStudents: req.body.maxStudents,
-			cost: req.body.cost
+			items: [req.body.items.split(',')],
+			zipCode: req.body.zipCode
 		};
 		Course.create(courseParams)
 			.then(course => {
@@ -40,7 +43,7 @@ module.exports = {
 	},
 	redirectView: (req, res, next) => {
 		let redirectPath = res.locals.redirect;
-		if(redirectPath) res.redirect(redirectPath);
+		if( redirectPath !== undefined ) res.redirect(redirectPath);
 		else next();
 	},
 	show: (req, res, next) => {
@@ -76,9 +79,10 @@ module.exports = {
 		let courseParams = {
 			title: req.body.title,
 			description: req.body.description,
-			maxStudents: req.body.maxStudents,
-			cost: req.body.cost
+			items: [req.body.items.split(',')],
+			zipCode: req.body.zipCode
 		};
+
 		Course.findByIdAndUpdate(courseId, {
 			$set: courseParams
 		})

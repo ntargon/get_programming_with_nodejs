@@ -9,7 +9,7 @@ const getUserParams = (body) => {
 			last: body.last
 		},
 		email: body.email,
-		// password: body.password,
+		password: body.password,
 		zipCode: body.zipCode
 	};
 };
@@ -128,15 +128,22 @@ module.exports = {
 		successFlash: "Logged in!"
 	}),
 	validate: (req, res, next) => {
-		req.sanitizeBody("email").normalizeEmail({
-			all_lowercase: true
-		}).trim();
+		req
+			.sanitizeBody("email").normalizeEmail({
+				all_lowercase: true
+			})
+			.trim();
 		req.check("email", "Email is invalid").isEmail();
-		req.check("zipCode", "Zip code is invalid").notEmpty().isInt().isLength({
-			min: 5,
-			max: 5
-		}).equals(req.body.zipCode);
-		// req.check("password", "Password cannot be empty").notEmpty();
+		req
+			.check("zipCode", "Zip code is invalid")
+			.notEmpty()
+			.isInt()
+			.isLength({
+				min: 5,
+				max: 5
+			})
+			.equals(req.body.zipCode);
+		req.check("password", "Password cannot be empty").notEmpty();
 
 		req.getValidationResult().then((error) => {
 			if(!error.isEmpty()){

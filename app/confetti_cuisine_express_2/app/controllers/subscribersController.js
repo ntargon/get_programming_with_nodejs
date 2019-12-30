@@ -3,42 +3,8 @@
 const Subscriber = require("../models/subscriber");
 
 module.exports = {
-	getAllSubscribers: (req, res) => {
-		Subscriber.find({})
-			.exec()
-			.then((subscribers) => {
-				res.render("subscribers", {
-					subscribers: subscribers
-				});
-			})
-			.catch((error) => {
-				console.log(error.message);
-				return [];
-			})
-			.then(() => {
-				console.log("promise complete");
-			});
-	},
-	getSubscriptionPage: (req, res) => {
-		res.render("contact");
-	},
-	saveSubscriber: (req, res) => {
-		let newSubscriber = new Subscriber({
-			name: req.body.name,
-			email: req.body.email,
-			zipCode: req.body.zipCode
-		});
-
-		newSubscriber.save()
-			.then(() => {
-				res.render("thanks");
-			})
-			.catch(error => {
-				res.send(error);
-			});
-	},
 	index: (req, res, next) => {
-		Subscriber.find()
+		Subscriber.find({})
 			.then(subscribers => {
 				res.locals.subscribers = subscribers;
 				next();
@@ -48,14 +14,32 @@ module.exports = {
 				next(error);
 			});
 		},
+
 	indexView: (req, res) => {
-		res.render("subscribers/index");
+			res.render("subscribers/index");
+		},
+
+	saveSubscriber: (req, res) => {
+		let newSubscriber = new Subscriber({
+			name: req.body.name,
+			email: req.body.email,
+			zipCode: req.body.zipCode
+		});
+		newSubscriber
+			.save()
+			.then(result => {
+				res.render("thanks");
+			})
+			.catch(error => {
+				if(error) res.send(error);
+			});
 	},
+
 	new: (req, res) => {
 		res.render("subscribers/new");
 	},
+
 	create: (req, res, next) => {
-		console.log(req);
 		let subscriberParams = {
 			name: req.body.name,
 			email: req.body.email,
@@ -65,6 +49,7 @@ module.exports = {
 			.then(subscriber => {
 				res.locals.redirect = "/subscribers";
 				res.locals.subscriber = subscriber;
+				console.log("subscriber create");
 				next();
 			})
 			.catch(error => {
@@ -72,11 +57,7 @@ module.exports = {
 				next(error);
 			});
 	},
-	redirectView: (req, res, next) => {
-		let redirectPath = res.locals.redirect;
-		if(redirectPath) res.redirect(redirectPath);
-		else next();
-	},
+
 	show: (req, res, next) => {
 		let subscriberId = req.params.id;
 		Subscriber.findById(subscriberId)
@@ -89,9 +70,11 @@ module.exports = {
 				next(error);
 			});
 	},
+
 	showView: (req, res) => {
 		res.render("subscribers/show");
 	},
+
 	edit: (req, res, next) => {
 		let subscriberId = req.params.id;
 		Subscriber.findById(subscriberId)
@@ -105,6 +88,7 @@ module.exports = {
 				next(error);
 			});
 	},
+
 	update: (req, res, next) => {
 		let subscriberId = req.params.id;
 		let subscriberParams = {
@@ -125,6 +109,7 @@ module.exports = {
 				next(error);
 			});
 	},
+
 	delete: (req, res, next) => {
 		let subscriberId = req.params.id;
 		Subscriber.findByIdAndRemove(subscriberId)
@@ -136,5 +121,11 @@ module.exports = {
 				console.log(`Error deleting subscriber by ID: ${error.message}`);
 				next();
 			});
+	},
+
+	redirectView: (req, res, next) => {
+		let redirectPath = res.locals.redirect;
+		if(redirectPath) res.redirect(redirectPath);
+		else next();
 	}
-}
+};

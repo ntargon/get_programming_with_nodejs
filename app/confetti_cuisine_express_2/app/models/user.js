@@ -43,9 +43,23 @@ userSchema.plugin(passportLocalMongoose, {
 	usernameField: "email"
 });
 
-// userSchema.methods.passwordComparison = function(inputPassword){
-// 	let user = this;
-// 	return bcrypt.compare(inputPassword, user.password);
-// };
+userSchema.pre('save', function(next) {
+	let user = this;
+	if(user.subscribedAccount === undefined ){
+		Subscriber.findOne({
+			email: user.email
+		})
+			.then(subscriber => {
+				user.subscribedAccount = subscriber;
+				next();
+			})
+			.catch(error => {
+				console.log(`Error in connecting subscriber:${error.message}`);
+				next(error);
+			})
+	}else{
+		next();
+	}
+});
 
 module.exports = mongoose.model("User", userSchema);

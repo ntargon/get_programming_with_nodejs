@@ -13,15 +13,11 @@ const mongoose = require("mongoose"),
 				type: String,
 				required: true
 			},
-			maxStudents: {
+			items: [],
+			zipCode: {
 				type: Number,
-				default: 0,
-				min: [0, "Course cannot havve a negative number of students"]
-			},
-			cost: {
-				type: Number,
-				default: 0,
-				min: [0, "Course cannot have a negative cost"]
+				min: [10000, 'Zip code too short'],
+				max: 99999
 			}
 		},
 		{
