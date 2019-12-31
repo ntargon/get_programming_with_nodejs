@@ -65,6 +65,10 @@
 		<%- body %>
 	</div>
 
+	<% if(currentUser) { %>
+		<div id="apiToken" data-token="<%=	currentUser.apiToken %>" style="display: none;">
+	<% } %>
+
 </body>
 
 </html>

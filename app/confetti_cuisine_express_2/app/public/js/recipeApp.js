@@ -1,7 +1,8 @@
 $(document).ready(() => {
     $("#modal-button").click(() => {
       $(".modal-body").html("");
-      $.get("/api/courses", (results = {}) => {
+      let apiToken = $("#apiToken").data("token");
+      $.get(`/api/courses?apiToken=${apiToken}`, (results = {}) => {
         let data = results.data;
         if(!data || !data.courses) return;
         data.courses.forEach((course) => {

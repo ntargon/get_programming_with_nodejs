@@ -4,7 +4,7 @@ const mongoose = require("mongoose"),
 	{Schema} = mongoose,
 	bcrypt = require("bcrypt"),
 	passportLocalMongoose = require("passport-local-mongoose"),
-
+	randToken = require('rand-token'),
 	userSchema = new Schema({
 		name: {
 			first: {
@@ -28,7 +28,10 @@ const mongoose = require("mongoose"),
 			max: 99999
 		},
 		courses: [{type: Schema.Types.ObjectId, ref: "Course"}],
-		subscribedAccount: {type: Schema.Types.ObjectId, ref: "Subscriber"}
+		subscribedAccount: {type: Schema.Types.ObjectId, ref: "Subscriber"},
+		apiToken: {
+			type: String
+		},
 	}, {
 		timestamps: true
 	});
@@ -45,6 +48,9 @@ userSchema.plugin(passportLocalMongoose, {
 
 userSchema.pre('save', function(next) {
 	let user = this;
+
+	if(!user.apiToken) user.apiToken = randToken.generate(16);
+
 	if(user.subscribedAccount === undefined ){
 		Subscriber.findOne({
 			email: user.email
