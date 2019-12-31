@@ -5,8 +5,8 @@ const router = require('express').Router(),
     userController = require('../controllers/usersController');
 
 
-router.post('/login', userController.apiAuthenticate);
-router.use(userController.verifyJWT);
+// router.post('/login', userController.apiAuthenticate);
+// router.use(userController.verifyJWT);
 // router.use(userController.verifyToken);
 router.get('/courses', courseController.index, courseController.filterUserCourses, courseController.respondJSON);
 router.get('/courses/:id/join', courseController.join, courseController.respondJSON);

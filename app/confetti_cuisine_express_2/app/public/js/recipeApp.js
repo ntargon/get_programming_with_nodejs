@@ -1,10 +1,10 @@
-const socket = io();
-
 $(document).ready(() => {
+    const socket = io();
     $("#modal-button").click(() => {
       $(".modal-body").html("");
-      let apiToken = $("#apiToken").data("token");
-      $.get(`/api/courses?apiToken=${apiToken}`, (results = {}) => {
+      // let apiToken = $("#apiToken").data("token");
+      // $.get(`/api/courses?apiToken=${apiToken}`, (results = {}) => {
+      $.get(`/api/courses`, (results = {}) => {
         let data = results.data;
         if(!data || !data.courses) return;
         data.courses.forEach((course) => {
@@ -14,7 +14,7 @@ $(document).ready(() => {
                 ${course.title}
               </span>
               <button class='${course.joined ? "joined-button" : "join-button"}' data-id="${course._id}">
-                Join
+                ${course.joined ? "Joined" : "Join"}
               </button>
               <div class="course-description">
                 ${course.description}
@@ -39,6 +39,27 @@ $(document).ready(() => {
       $('#chat-input').val('');
       return false;
     });
+
+    socket.on('message', (message) => {
+      displayMessage(message);
+      for(let i=0; i<2; i++){
+        $('.chat-icon').fadeOut(200).fadeIn(200);
+      }
+    });
+  
+    socket.on('load all messages', (data) => {
+      data.forEach(message => {
+        displayMessage(message);
+      });
+    });
+  
+    socket.on('user disconnected', () => {
+      displayMessage({
+        userName: 'Notice',
+        content: 'User left the chat'
+      });
+    })
+
   });
 
   let addJoinButtonListener = () => {
@@ -70,14 +91,4 @@ $(document).ready(() => {
     let userId = $('#chat-user-id').val();
     return userId === id ? 'current-user': '';
   }
-
-  socket.on('message', (message) => {
-    displayMessage(message);
-  });
-
-  socket.on('load all messages', (data) => {
-    data.forEach(message => {
-      displayMessage(message);
-    });
-  });
 

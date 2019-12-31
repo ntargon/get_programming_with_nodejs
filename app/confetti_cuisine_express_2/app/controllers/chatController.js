@@ -1,6 +1,5 @@
 'use strict';
-const Message = require('../models/message'),
-    User = require('../models/user');
+const Message = require('../models/message');
 
 module.exports = io => {
     io.on('connection', client => {
@@ -14,6 +13,7 @@ module.exports = io => {
             });
 
         client.on('disconnect', () => {
+            client.broadcast.emit('user disconnected');
             console.log('user disconnected');
         });
         client.on('message', (data) => {
