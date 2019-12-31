@@ -25,7 +25,8 @@
     "mongoose": "^5.8.1",
     "passport": "^0.4.1",
     "passport-local-mongoose": "^5.0.1",
-    "rand-token": "^0.4.0"
+    "rand-token": "^0.4.0",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"

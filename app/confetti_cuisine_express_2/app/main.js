@@ -11,11 +11,6 @@ const express = require('express'),
 	connectFlash = require('connect-flash'),
 	expressValidator = require('express-validator'),
 	passport = require('passport'),
-	errorController = require('./controllers/errorController'),
-	homeController = require('./controllers/homeController'),
-	subscribersController = require('./controllers/subscribersController'),
-	usersController = require('./controllers/usersController'),
-	coursesController = require('./controllers/coursesController'),
 	User = require('./models/user');
 
 mongoose.Promise = global.Promise;
@@ -84,8 +79,10 @@ app.use(expressValidator());
 // app.use('/', router);
 app.use(router);
 
-app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
 	console.log(
 		`Server running at http://localhost:${app.get("port")}`
 		);
-});
+}),
+	io = require('socket.io')(server);
+require('./controllers/chatController')(io);

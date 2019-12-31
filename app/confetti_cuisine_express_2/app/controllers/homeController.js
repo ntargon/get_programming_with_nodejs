@@ -6,5 +6,8 @@
 	},
 	contact: (req, res) => {
 		res.render('contact');
+	},
+	chat: (req, res) => {
+		res.render("chat");
 	}
  };
